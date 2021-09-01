@@ -20,9 +20,18 @@ class Ball:
         dist_y = velocity_y * time + 0.5 * constants.GRAVITY * math.pow(time, 2)
         return (round(start_x_y[0] + dist_x), round(start_x_y[1] + dist_y))
 
-    def get_current_height(self):
-        return self.center[1]
-
+    def check_boundaries(self, start_x_y, vectors):
+        # If the ball travels out of the window to the left
+        if self.center[0] <= self.radius:
+            offset = - start_x_y[0]
+            start_x_y[0] = offset + self.radius 
+            vectors[0] = -vectors[0]
+        # If the ball travels out of the window to the right
+        elif self.center[0] >= constants.WINDOW_WIDTH - self.radius:
+            offset = constants.WINDOW_WIDTH - start_x_y[0]
+            start_x_y[0] = offset + constants.WINDOW_WIDTH - self.radius
+            vectors[0] = -vectors[0]
+        return start_x_y, vectors
 
 class Window:
     def __init__(self, width, height, title="PYVITY"):

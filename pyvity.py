@@ -38,14 +38,7 @@ def get_vectors(mouse_coordinates, ball_coordinates):
 
 def in_motion(ball, start_x_y, vectors, time):
     if ball.center[1] <= constants.WINDOW_HEIGHT - ball.radius:
-        if ball.center[0] <= ball.radius:
-            offset = - start_x_y[0]
-            start_x_y[0] = offset + ball.radius 
-            vectors[0] = -vectors[0]
-        elif ball.center[0] >= constants.WINDOW_WIDTH - ball.radius:
-            offset = constants.WINDOW_WIDTH - start_x_y[0]
-            start_x_y[0] = offset + constants.WINDOW_WIDTH - ball.radius
-            vectors[0] = -vectors[0]
+        start_x_y, vectors = ball.check_boundaries(start_x_y, vectors)
         ball.center = ball.ball_path(start_x_y, vectors, time)
         return True
     ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
