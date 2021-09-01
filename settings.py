@@ -20,7 +20,9 @@ class Ball:
         dist_y = velocity_y * time + 0.5 * constants.GRAVITY * math.pow(time, 2)
         return (round(start_x_y[0] + dist_x), round(start_x_y[1] + dist_y))
 
-        
+    def get_current_height(self):
+        return self.center[1]
+
 
 class Window:
     def __init__(self, width, height, title="PYVITY"):
