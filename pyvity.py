@@ -50,7 +50,6 @@ def in_motion(ball, start_x_y, vectors, percentage_power, time):
         time = 0
         ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
         start_x_y = [ball.center[0], ball.center[1]]
-        print(vectors)
         if get_magnitude(vectors) <= 0.005:
             ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
             return False, start_x_y, time, vectors
