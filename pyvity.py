@@ -9,7 +9,8 @@ def setup():
     window = Window(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT, "PYVITY")
     screen = pygame.display.set_mode(window.dimensions)
     pygame.display.set_caption(window.title)
-    ball = Ball(color=(255, 244, 125), center=(window.dimensions[0] / 2, window.dimensions[1] - 5), radius=5)
+    radius = constants.BALL_RADIUS
+    ball = Ball(color=(255, 244, 125), center=(window.dimensions[0] / 2, window.dimensions[1] - radius), radius=radius)
 
     return screen, ball
 
@@ -49,7 +50,7 @@ def in_motion(ball, start_x_y, vectors, percentage_power, time):
         time = 0
         ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
         start_x_y = [ball.center[0], ball.center[1]]
-        if get_magnitude(vectors) <= 0.005:
+        if get_magnitude(vectors) <= 0.1:
             ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
             return False, start_x_y, time, vectors
         return True, start_x_y, time, vectors
