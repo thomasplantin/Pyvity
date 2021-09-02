@@ -40,7 +40,6 @@ def get_magnitude(vectors):
     return math.sqrt(math.pow(vectors[0], 2) + math.pow(vectors[1], 2))
 
 def in_motion(ball, start_x_y, vectors, percentage_power, time):
-    
     if ball.center[1] <= constants.WINDOW_HEIGHT - ball.radius:
         start_x_y, vectors = ball.check_boundaries(start_x_y, vectors)
         ball.center = ball.ball_path(start_x_y, vectors, time)
