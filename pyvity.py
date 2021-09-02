@@ -6,17 +6,20 @@ import constants
 
 def setup():
     pygame.init()
+    pygame.font.init()
+    my_font = pygame.font.SysFont('Comic Sans MS', 30)
     window = Window(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT, "PYVITY")
     screen = pygame.display.set_mode(window.dimensions)
     pygame.display.set_caption(window.title)
     radius = constants.BALL_RADIUS
     ball = Ball(color=(255, 244, 125), center=(window.dimensions[0] / 2, window.dimensions[1] - radius), radius=radius)
-    return screen, ball
+    return screen, ball, my_font
 
 
-def render_window(screen, bg, ball, line, shoot):
+def render_window(screen, bg, ball, line, shoot, text):
     screen.fill((64, 64, 64))
     screen.blit(bg.image, bg.rect)
+    screen.blit(text, (0, 0))
     ball.draw(screen)
     if not shoot:
         pygame.draw.line(screen, (255, 255, 255), line[0], (line[0][0] + line[1][0], line[0][1] + line[1][1]))
@@ -70,7 +73,7 @@ def get_events(running, shoot, time, start_x_y, ball, current_planet):
             shoot = True
             start_x_y = [ball.center[0], ball.center[1]]
 
-        if event.type == pygame.KEYDOWN and shoot == False:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 current_planet -= 1
                 if current_planet < 0:
@@ -79,6 +82,8 @@ def get_events(running, shoot, time, start_x_y, ball, current_planet):
                 current_planet += 1
                 if current_planet >= len(constants.PLANETS):
                     current_planet = 0
+            elif event.key == pygame.K_ESCAPE:
+                running = False
     
     img = constants.PLANETS[current_planet]["bg"]
     bg = Background(f"./backgrounds/{img}", [0, 0])
@@ -86,7 +91,7 @@ def get_events(running, shoot, time, start_x_y, ball, current_planet):
     return running, time, shoot, start_x_y, bg, current_planet
 
 
-def run(screen, ball):
+def run(screen, ball, my_font):
     running = True
     shoot = False
     time = 0
@@ -104,12 +109,13 @@ def run(screen, ball):
             line = [ball.center, vectors]
         
         running, time, shoot, start_x_y, bg, current_planet = get_events(running, shoot, time, start_x_y, ball, current_planet)
-        render_window(screen, bg, ball, line, shoot)
+        text = my_font.render(constants.PLANETS[current_planet]["title"], False, (255, 255, 255))
+        render_window(screen, bg, ball, line, shoot, text)
 
 
 def main():
-    screen, ball = setup()
-    run(screen, ball)
+    screen, ball, my_font = setup()
+    run(screen, ball, my_font)
     pygame.quit()
 
 
