@@ -36,23 +36,37 @@ def get_vectors(mouse_coordinates, ball_coordinates):
 
     return [vector_x, vector_y]
 
-def in_motion(ball, start_x_y, vectors, time):
+def get_magnitude(vectors):
+    return math.sqrt(math.pow(vectors[0], 2) + math.pow(vectors[1], 2))
+
+def in_motion(ball, start_x_y, vectors, percentage_power, time):
+    
     if ball.center[1] <= constants.WINDOW_HEIGHT - ball.radius:
         start_x_y, vectors = ball.check_boundaries(start_x_y, vectors)
         ball.center = ball.ball_path(start_x_y, vectors, time)
-        return True
-    ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
-    return False
+        return True, start_x_y, time, vectors
+    else:
+        vectors = [vector * percentage_power for vector in vectors] 
+        time = 0
+        ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
+        start_x_y = [ball.center[0], ball.center[1]]
+        print(vectors)
+        if get_magnitude(vectors) <= 0.005:
+            ball.center = (ball.center[0], constants.WINDOW_HEIGHT - ball.radius)
+            return False, start_x_y, time, vectors
+        return True, start_x_y, time, vectors
+        
 
 def run(screen, ball):
     running = True
     shoot = False
     time = 0
+    percentage_power = 0.66
     start_x_y = [0, 0]
     while running:
 
         if shoot:
-            shoot = in_motion(ball, start_x_y, vectors, time)
+            shoot, start_x_y, time, vectors = in_motion(ball, start_x_y, vectors, percentage_power, time)
             time += 0.1
         
         else:

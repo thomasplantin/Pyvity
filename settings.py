@@ -21,13 +21,13 @@ class Ball:
         return (round(start_x_y[0] + dist_x), round(start_x_y[1] + dist_y))
 
     def check_boundaries(self, start_x_y, vectors):
-        # If the ball travels out of the window to the left
         if self.center[0] <= self.radius:
+            # If the ball travels out of the window to the left
             offset = - start_x_y[0]
             start_x_y[0] = offset + self.radius 
             vectors[0] = -vectors[0]
-        # If the ball travels out of the window to the right
         elif self.center[0] >= constants.WINDOW_WIDTH - self.radius:
+            # If the ball travels out of the window to the right
             offset = constants.WINDOW_WIDTH - start_x_y[0]
             start_x_y[0] = offset + constants.WINDOW_WIDTH - self.radius
             vectors[0] = -vectors[0]
