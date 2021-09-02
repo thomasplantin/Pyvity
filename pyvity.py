@@ -14,12 +14,14 @@ def setup():
 
     return screen, ball
 
+
 def render_window(screen, ball, line, shoot):
     screen.fill((64, 64, 64))
     ball.draw(screen)
     if not shoot:
         pygame.draw.line(screen, (255, 255, 255), line[0], (line[0][0] + line[1][0], line[0][1] + line[1][1]))
     pygame.display.update()
+
 
 def get_vectors(mouse_coordinates, ball_coordinates):
     vector_x = mouse_coordinates[0] - ball_coordinates[0]
@@ -37,8 +39,10 @@ def get_vectors(mouse_coordinates, ball_coordinates):
 
     return [vector_x, vector_y]
 
+
 def get_magnitude(vectors):
     return math.sqrt(math.pow(vectors[0], 2) + math.pow(vectors[1], 2))
+
 
 def in_motion(ball, start_x_y, vectors, percentage_power, time):
     if ball.center[1] <= constants.WINDOW_HEIGHT - ball.radius:
