@@ -13,11 +13,11 @@ class Ball:
         pygame.draw.circle(window, self.color, self.center, self.radius - 1)
 
     @staticmethod
-    def ball_path(start_x_y, vectors, time):
+    def ball_path(start_x_y, vectors, time, gravity):
         velocity_x = vectors[0] * (1 - constants.PERCENTAGE_HANDICAP)
         velocity_y = vectors[1] * (1 - constants.PERCENTAGE_HANDICAP)
         dist_x = velocity_x * time
-        dist_y = velocity_y * time + 0.5 * constants.GRAVITY * math.pow(time, 2)
+        dist_y = velocity_y * time + 0.5 * gravity * math.pow(time, 2)
         return (round(start_x_y[0] + dist_x), round(start_x_y[1] + dist_y))
 
     def check_boundaries(self, start_x_y, vectors):
@@ -33,9 +33,17 @@ class Ball:
             vectors[0] = -vectors[0]
         return start_x_y, vectors
 
+
 class Window:
     def __init__(self, width, height, title="PYVITY"):
         self.dimensions = (width, height)
         self.title = title
 
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
     

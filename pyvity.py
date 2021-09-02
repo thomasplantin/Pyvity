@@ -1,7 +1,7 @@
 import pygame
 import math
 
-from settings import Ball, Window
+from settings import Ball, Window, Background
 import constants
 
 def setup():
@@ -11,12 +11,12 @@ def setup():
     pygame.display.set_caption(window.title)
     radius = constants.BALL_RADIUS
     ball = Ball(color=(255, 244, 125), center=(window.dimensions[0] / 2, window.dimensions[1] - radius), radius=radius)
-
     return screen, ball
 
 
-def render_window(screen, ball, line, shoot):
+def render_window(screen, bg, ball, line, shoot):
     screen.fill((64, 64, 64))
+    screen.blit(bg.image, bg.rect)
     ball.draw(screen)
     if not shoot:
         pygame.draw.line(screen, (255, 255, 255), line[0], (line[0][0] + line[1][0], line[0][1] + line[1][1]))
@@ -44,10 +44,10 @@ def get_magnitude(vectors):
     return math.sqrt(math.pow(vectors[0], 2) + math.pow(vectors[1], 2))
 
 
-def in_motion(ball, start_x_y, vectors, percentage_power, time):
+def in_motion(ball, start_x_y, vectors, percentage_power, time, current_planet):
     if ball.center[1] <= constants.WINDOW_HEIGHT - ball.radius:
         start_x_y, vectors = ball.check_boundaries(start_x_y, vectors)
-        ball.center = ball.ball_path(start_x_y, vectors, time)
+        ball.center = ball.ball_path(start_x_y, vectors, time, constants.PLANETS[current_planet]["gravity"])
         return True, start_x_y, time, vectors
     else:
         vectors = [vector * percentage_power for vector in vectors] 
@@ -60,31 +60,51 @@ def in_motion(ball, start_x_y, vectors, percentage_power, time):
         return True, start_x_y, time, vectors
         
 
+def get_events(running, shoot, time, start_x_y, ball, current_planet):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN and shoot == False:
+            time = 0
+            shoot = True
+            start_x_y = [ball.center[0], ball.center[1]]
+
+        if event.type == pygame.KEYDOWN and shoot == False:
+            if event.key == pygame.K_LEFT:
+                current_planet -= 1
+                if current_planet < 0:
+                    current_planet = len(constants.PLANETS) - 1
+            elif event.key == pygame.K_RIGHT:
+                current_planet += 1
+                if current_planet >= len(constants.PLANETS):
+                    current_planet = 0
+    
+    img = constants.PLANETS[current_planet]["bg"]
+    bg = Background(f"./backgrounds/{img}", [0, 0])
+
+    return running, time, shoot, start_x_y, bg, current_planet
+
+
 def run(screen, ball):
     running = True
     shoot = False
     time = 0
     percentage_power = 0.66
     start_x_y = [0, 0]
+    current_planet = 2
     while running:
 
         if shoot:
-            shoot, start_x_y, time, vectors = in_motion(ball, start_x_y, vectors, percentage_power, time)
+            shoot, start_x_y, time, vectors = in_motion(ball, start_x_y, vectors, percentage_power, time, current_planet)
             time += 0.1
         
         else:
             vectors = get_vectors(pygame.mouse.get_pos(), ball.center)
             line = [ball.center, vectors]
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-            if event.type == pygame.MOUSEBUTTONDOWN and shoot == False:
-                time = 0
-                shoot = True
-                start_x_y = [ball.center[0], ball.center[1]]
-        render_window(screen, ball, line, shoot)
+        
+        running, time, shoot, start_x_y, bg, current_planet = get_events(running, shoot, time, start_x_y, ball, current_planet)
+        render_window(screen, bg, ball, line, shoot)
 
 
 def main():
